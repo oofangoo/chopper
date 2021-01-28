@@ -25,4 +25,9 @@ dev_dependencies:
 
 dependency_overrides:
   chopper:
-    path: ../chopper
+    git: 
+      url: https://github.com/oofangoo/chopper.git
+      path: chopper
+# dependency_overrides:
+#   chopper:
+#     path: ../chopper
