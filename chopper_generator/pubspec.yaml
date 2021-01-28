@@ -23,7 +23,6 @@ dev_dependencies:
   test: ^1.15.4
   pedantic: ^1.9.2
 
-# Uncomment for development
 dependency_overrides:
   chopper:
     path: ../chopper
