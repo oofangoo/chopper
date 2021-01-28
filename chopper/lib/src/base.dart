@@ -228,11 +228,12 @@ class ChopperClient {
 
     assert(res != null, 'Interceptors should return modified response');
 
-    assert(
-      body == res.body,
-      'Interceptors should not transform the body of the response'
-      'Use Response converter instead',
-    );
+    /// Disable by Fang -- Need refresh token interceptor to work
+//     assert(
+//       body == res.body,
+//       'Interceptors should not transform the body of the response'
+//       'Use Response converter instead',
+//     );
 
     return res;
   }
