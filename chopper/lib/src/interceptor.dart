@@ -73,7 +73,6 @@ abstract class RequestInterceptor {
 /// See [JsonConverter] and [FormUrlEncodedConverter] for example implementations.
 @immutable
 abstract class Converter {
-
   /// Converts the received [Request] to a [Request] which has a body with the
   /// HTTP representation of the original body.
   FutureOr<Request> convertRequest(Request request);
@@ -96,7 +95,6 @@ abstract class Converter {
 /// An `ErrorConverter` is called only on error responses
 /// (statusCode < 200 || statusCode >= 300) and before any [ResponseInterceptor]s.
 abstract class ErrorConverter {
-
   /// Converts the received [Response] to a [Response] which has a body with the
   /// HTTP representation of the original body.
   FutureOr<Response> convertError<BodyType, InnerType>(Response response);
@@ -152,11 +150,11 @@ class CurlInterceptor implements RequestInterceptor {
     // this is fairly naive, but it should cover most cases
     if (baseRequest is http.Request) {
       final body = baseRequest.body;
-      if (body != null && body.isNotEmpty) {
+      if (body.isNotEmpty) {
         curl += ' -d \'$body\'';
       }
     }
-    curl += ' $url';
+    curl += ' \"$url\"';
     chopperLogger.info(curl);
     return request;
   }
@@ -181,7 +179,7 @@ class HttpLoggingInterceptor
     var bytes = '';
     if (base is http.Request) {
       final body = base.body;
-      if (body != null && body.isNotEmpty) {
+      if (body.isNotEmpty) {
         chopperLogger.info(body);
         bytes = ' (${base.bodyBytes.length}-byte body)';
       }
@@ -194,16 +192,16 @@ class HttpLoggingInterceptor
   @override
   FutureOr<Response> onResponse(Response response) {
     final base = response.base.request;
-    chopperLogger.info('<-- ${response.statusCode} ${base.url}');
+    chopperLogger.info('<-- ${response.statusCode} ${base!.url}');
 
     response.base.headers.forEach((k, v) => chopperLogger.info('$k: $v'));
 
     var bytes;
     if (response.base is http.Response) {
       final resp = response.base as http.Response;
-      if (resp.body != null && resp.body.isNotEmpty) {
+      if (resp.body.isNotEmpty) {
         chopperLogger.info(resp.body);
-        bytes = ' (${response.bodyBytes?.length}-byte body)';
+        bytes = ' (${response.bodyBytes.length}-byte body)';
       }
     }
 
@@ -278,7 +276,7 @@ class JsonConverter implements Converter, ErrorConverter {
 
   @override
   Response<BodyType> convertResponse<BodyType, InnerType>(Response response) {
-    return decodeJson<BodyType, InnerType>(response);
+    return decodeJson<BodyType, InnerType>(response) as Response<BodyType>;
   }
 
   dynamic _tryDecodeJson(String data) {
@@ -342,7 +340,7 @@ class FormUrlEncodedConverter implements Converter, ErrorConverter {
 
   @override
   Response<BodyType> convertResponse<BodyType, InnerType>(Response response) =>
-      response;
+      response as Response<BodyType>;
 
   @override
   FutureOr<Response> convertError<BodyType, InnerType>(Response response) =>

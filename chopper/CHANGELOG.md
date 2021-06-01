@@ -1,5 +1,19 @@
 # Changelog
 
+## 4.0.0
+
+- **Null safety support**
+- Fix infinite loop when using Authenticators
+- Remove deprecated `FileField`, use `PartFile` instead
+- Remove deprecated `Request.replace`, use `Request.copyWith` instead
+- Remove deprecated `PartValue.replace`, use `PartValue.copyWith` instead
+- Remove deprecated `Response.replace`, use `Response.copyWith` instead
+- Support for OPTIONS requests
+- Support for passing data in the body of GET requests (anti-pattern, but requested)
+- Support for OkHttp-like Authenticator implementation
+- Support for generic API methods
+- Updated public API documentation and how-tos
+
 ## 3.0.3
 
 - Packages upgrade

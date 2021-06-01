@@ -1,23 +1,18 @@
 #!/usr/bin/env bash
 
-if [ -z "$PKG" ]; then
-  echo -e '\033[31mPKG environment variable must be set!\033[0m'
-  exit 1
-fi
+set -e
 
+PKG=$1
 echo -e "\033[1mPKG: ${PKG}\033[22m"
 pushd "${PKG}"
 
-mkdir -p .pub-cache
+mkdir -p ~/.pub-cache
 
-cat <<EOF > ~/.pub-cache/credentials.json
-{
-  "accessToken":"$accessToken",
-  "refreshToken":"$refreshToken",
-  "tokenEndpoint":"$tokenEndpoint",
-  "scopes": ["https://www.googleapis.com/auth/userinfo.email","openid"],
-  "expiration":$expiration
-}
-EOF
+echo $CREDENTIAL_JSON > ~/.pub-cache/credentials.json
+
+sed '/Comment before publish$/,+2 d' pubspec.yaml > pubspec.temp.yaml
+rm pubspec.yaml
+mv pubspec.temp.yaml pubspec.yaml
 
 dart pub publish -f
+popd
