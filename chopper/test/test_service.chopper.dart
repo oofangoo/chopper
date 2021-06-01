@@ -8,7 +8,7 @@ part of 'test_service.dart';
 
 // ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations
 class _$HttpTestService extends HttpTestService {
-  _$HttpTestService([ChopperClient client]) {
+  _$HttpTestService([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
   }
@@ -17,9 +17,12 @@ class _$HttpTestService extends HttpTestService {
   final definitionType = HttpTestService;
 
   @override
-  Future<Response<String>> getTest(String id, {String dynamicHeader}) {
+  Future<Response<String>> getTest(String id, {required String dynamicHeader}) {
     final $url = '/test/get/$id';
-    final $headers = {'test': dynamicHeader};
+    final $headers = {
+      'test': dynamicHeader,
+    };
+
     final $request = Request('GET', $url, client.baseUrl, headers: $headers);
     return client.send<String, String>($request);
   }
@@ -28,6 +31,13 @@ class _$HttpTestService extends HttpTestService {
   Future<Response<dynamic>> headTest() {
     final $url = '/test/head';
     final $request = Request('HEAD', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> optionsTest() {
+    final $url = '/test/options';
+    final $request = Request('OPTIONS', $url, client.baseUrl);
     return client.send<dynamic, dynamic>($request);
   }
 
@@ -54,7 +64,7 @@ class _$HttpTestService extends HttpTestService {
 
   @override
   Future<Response<dynamic>> getQueryTest(
-      {String name, int number, int def = 42}) {
+      {String name = '', int? number, int? def = 42}) {
     final $url = '/test/query';
     final $params = <String, dynamic>{
       'name': name,
@@ -75,11 +85,19 @@ class _$HttpTestService extends HttpTestService {
 
   @override
   Future<Response<dynamic>> getQueryMapTest2(Map<String, dynamic> query,
-      {bool test}) {
+      {bool? test}) {
     final $url = '/test/query_map';
     final $params = <String, dynamic>{'test': test};
     $params.addAll(query);
     final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> getBody(dynamic body) {
+    final $url = '/test/get_body';
+    final $body = body;
+    final $request = Request('GET', $url, client.baseUrl, body: $body);
     return client.send<dynamic, dynamic>($request);
   }
 
@@ -110,7 +128,10 @@ class _$HttpTestService extends HttpTestService {
   @override
   Future<Response<dynamic>> deleteTest(String id) {
     final $url = '/test/delete/$id';
-    final $headers = {'foo': 'bar'};
+    final $headers = {
+      'foo': 'bar',
+    };
+
     final $request = Request('DELETE', $url, client.baseUrl, headers: $headers);
     return client.send<dynamic, dynamic>($request);
   }
@@ -143,7 +164,10 @@ class _$HttpTestService extends HttpTestService {
   @override
   Future<Response<dynamic>> postFormUsingHeaders(Map<String, String> fields) {
     final $url = '/test/form/body';
-    final $headers = {'content-type': 'application/x-www-form-urlencoded'};
+    final $headers = {
+      'content-type': 'application/x-www-form-urlencoded',
+    };
+
     final $body = fields;
     final $request =
         Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
@@ -192,10 +216,11 @@ class _$HttpTestService extends HttpTestService {
   }
 
   @override
-  Future<Response<dynamic>> postMultipartFile(MultipartFile file, {String id}) {
+  Future<Response<dynamic>> postMultipartFile(MultipartFile file,
+      {String? id}) {
     final $url = '/test/file';
     final $parts = <PartValue>[
-      PartValue<String>('id', id),
+      PartValue<String?>('id', id),
       PartValueFile<MultipartFile>('file', file)
     ];
     final $request =

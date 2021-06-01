@@ -36,7 +36,10 @@ void main() {
         client: requestClient,
       );
 
-      await chopper.getService<HttpTestService>().getTest('1234');
+      await chopper.getService<HttpTestService>().getTest(
+            '1234',
+            dynamicHeader: '',
+          );
     });
 
     test('RequestInterceptorFunc', () async {
@@ -51,7 +54,10 @@ void main() {
         client: requestClient,
       );
 
-      await chopper.getService<HttpTestService>().getTest('1234');
+      await chopper.getService<HttpTestService>().getTest(
+            '1234',
+            dynamicHeader: '',
+          );
     });
 
     test('ResponseInterceptor', () async {
@@ -63,7 +69,10 @@ void main() {
         client: responseClient,
       );
 
-      await chopper.getService<HttpTestService>().getTest('1234');
+      await chopper.getService<HttpTestService>().getTest(
+            '1234',
+            dynamicHeader: '',
+          );
 
       expect(ResponseIntercept.intercepted, isA<_Intercepted>());
     });
@@ -84,7 +93,10 @@ void main() {
         client: responseClient,
       );
 
-      await chopper.getService<HttpTestService>().getTest('1234');
+      await chopper.getService<HttpTestService>().getTest(
+            '1234',
+            dynamicHeader: '',
+          );
 
       expect(intercepted, isA<_Intercepted<dynamic>>());
     });
@@ -105,9 +117,12 @@ void main() {
         client: responseClient,
       );
 
-      await chopper.getService<HttpTestService>().getTest('1234');
+      await chopper.getService<HttpTestService>().getTest(
+            '1234',
+            dynamicHeader: '',
+          );
 
-      expect(intercepted, isA<_Intercepted<String>>());
+      expect(intercepted, isA<_Intercepted<String?>>());
     });
 
     test('TypedResponseInterceptorFunc2', () async {
@@ -124,7 +139,7 @@ void main() {
           <BodyType, InnerType>(Response<BodyType> response) {
             expect(isTypeOf<String, InnerType>(), isTrue);
             expect(isTypeOf<BodyType, List<String>>(), isTrue);
-            intercepted = _Intercepted<BodyType>(response.body);
+            intercepted = _Intercepted<BodyType>(response.body!);
             return response;
           },
         ],
@@ -155,7 +170,10 @@ void main() {
         client: client,
       );
 
-      await chopper.getService<HttpTestService>().getTest('1234');
+      await chopper.getService<HttpTestService>().getTest(
+            '1234',
+            dynamicHeader: '',
+          );
     });
 
     final fakeRequest = Request(
@@ -168,14 +186,14 @@ void main() {
 
     test('Curl interceptors', () async {
       final curl = CurlInterceptor();
-      String log;
+      var log = '';
       chopperLogger.onRecord.listen((r) => log = r.message);
       await curl.onRequest(fakeRequest);
 
       expect(
         log,
         equals(
-          "curl -v -X POST -H 'foo: bar' -H 'content-type: text/plain; charset=utf-8' -d 'test' base/",
+          "curl -v -X POST -H 'foo: bar' -H 'content-type: text/plain; charset=utf-8' -d 'test' \"base/\"",
         ),
       );
     });

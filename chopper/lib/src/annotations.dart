@@ -20,7 +20,7 @@ import 'constants.dart';
 /// See [Method] to define an HTTP request
 @immutable
 class ChopperApi {
-  /// Url that will prefix every request define inside that API.
+  /// A part of a URL that every request defined inside a class annotated with [ChopperApi] will be prefixed with.
   final String baseUrl;
 
   const ChopperApi({
@@ -43,12 +43,12 @@ class ChopperApi {
 @immutable
 class Path {
   /// Name is used to bind a method parameter to
-  /// the url parameter.
+  /// a URL path parameter.
   /// ```dart
   /// @Get(path: '/{param}')
   /// Future<Response> fetch(@Path('param') String hello);
   /// ```
-  final String name;
+  final String? name;
 
   const Path([this.name]);
 }
@@ -71,7 +71,7 @@ class Query {
   /// @Get(path: '/something')
   /// Future<Response> fetch({@Query('id') String mySuperId});
   /// ```
-  final String name;
+  final String? name;
 
   const Query([this.name]);
 }
@@ -123,7 +123,7 @@ class Header {
   /// @Get()
   /// Future<Response> fetch(@Header('foo') String headerFoo);
   /// ```
-  final String name;
+  final String? name;
 
   const Header([this.name]);
 }
@@ -161,7 +161,7 @@ class Method {
 
   const Method(
     this.method, {
-    this.optionalBody,
+    this.optionalBody = false,
     this.path = '',
     this.headers = const {},
   });
@@ -262,8 +262,23 @@ class Head extends Method {
         );
 }
 
+@immutable
+class Options extends Method {
+  const Options({
+    bool optionalBody = true,
+    String path = '',
+    Map<String, String> headers = const {},
+  }) : super(
+          HttpMethod.Options,
+          optionalBody: optionalBody,
+          path: path,
+          headers: headers,
+        );
+}
+
 /// A function that should convert the body of a [Request] to the HTTP representation.
 typedef ConvertRequest = FutureOr<Request> Function(Request request);
+
 /// A function that should convert the body of a [Response] from the HTTP
 /// representation to a Dart object.
 typedef ConvertResponse<T> = FutureOr<Response> Function(Response response);
@@ -298,8 +313,8 @@ typedef ConvertResponse<T> = FutureOr<Response> Function(Response response);
 /// }
 @immutable
 class FactoryConverter {
-  final ConvertRequest request;
-  final ConvertResponse response;
+  final ConvertRequest? request;
+  final ConvertResponse? response;
 
   const FactoryConverter({
     this.request,
@@ -322,7 +337,7 @@ class Field {
   /// @Post(path: '/')
   /// Future<Response> create(@Field('id') String myId);
   /// ```
-  final String name;
+  final String? name;
 
   const Field([this.name]);
 }
@@ -349,7 +364,7 @@ class Multipart {
 /// Also accepts `MultipartFile` (from package:http).
 @immutable
 class Part {
-  final String name;
+  final String? name;
   const Part([this.name]);
 }
 
@@ -367,27 +382,9 @@ class Part {
 ///   - `MultipartFile` (from package:http)
 @immutable
 class PartFile {
-  final String name;
+  final String? name;
 
   const PartFile([this.name]);
-}
-
-/// Use it to define a file field for a [Multipart] request.
-///
-/// ```dart
-/// @Post(path: 'file')
-/// @multipart
-/// Future<Response> postFile(@FileField('file') List<int> bytes);
-/// ```
-///
-/// Supports the following values:
-///   - `List<int>`
-///   - [String] (path of your file)
-///   - `MultipartFile` (from package:http)
-@immutable
-@Deprecated('Use PartFile instead')
-class FileField extends PartFile {
-  const FileField([String name]) : super(name);
 }
 
 const multipart = Multipart();

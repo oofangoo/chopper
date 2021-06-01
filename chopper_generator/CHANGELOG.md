@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.0
+
+- **Null safety support**
+- Fix `@Header` annotation not generating null safe code
+- Respect `required` keyword in functions
+
+
 ## 3.0.5
 
 - Packages upgrade
